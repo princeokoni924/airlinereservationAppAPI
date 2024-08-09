@@ -30,8 +30,12 @@ namespace AirlineReservation.Domain.Models
         public bool VerifyCardDetais()
         {
           if(string.IsNullOrWhiteSpace(CardNumber)|| CardNumber.Length<12|| CardNumber.Length<16|| CardNumber.Length<19)
-                
+          {
                 return false;
+                throw new()
+          }
+            return true;   
+                
         }
     }
 }
