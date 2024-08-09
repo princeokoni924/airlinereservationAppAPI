@@ -20,6 +20,7 @@ namespace AirlineSystem.Api
                       builder.WithOrigins("http://localhost:3000")
                              .WithHeaders(new string[]
                              {
+
                                  HeaderNames.ContentType,
                                  HeaderNames.Authorization
                              })
