@@ -33,5 +33,7 @@ namespace AirlineReservation.Application.Interface
         Task CancelBooking(string ticketNumber);
 
         Task InitializeFlight();
+
+        Task Proc
     }
 }

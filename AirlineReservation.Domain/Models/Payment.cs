@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AirLineReservation.Exceptions;
+using AirLineReservation.Exceptions.Utilities;
+using System.Globalization;
 
 namespace AirlineReservation.Domain.Models
 {
@@ -21,21 +19,44 @@ namespace AirlineReservation.Domain.Models
         public string TransactionId { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
 
-        public void ProcessPayment()
+        
+        private void ProcessPayment()
         {
-            // implement payment api
+            // implement payment api to proceed payment
         }
 
 
-        public bool VerifyCardDetais()
+        private bool VerifyCardDetais()
         {
           if(string.IsNullOrWhiteSpace(CardNumber)|| CardNumber.Length<12|| CardNumber.Length<16|| CardNumber.Length<19)
           {
                 return false;
-                throw new()
+                throw new ReservationEx("invalid cardNumber");
           }
-            return true;   
-                
+            if (string.IsNullOrWhiteSpace(CardHolderName))
+            {
+                return false ;
+                throw new ReservationEx("card holder name require");
+            }
+
+            DateTime cardExpiryDate;
+            if (!DateTime.TryParseExact(CardExpiryDate,"MM/yy",null,DateTimeStyles.None, out cardExpiryDate))
+            {
+              return false;
+            }else if (cardExpiryDate<DateTime.UtcNow)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+      
+        }
+
+        private bool CompletePayment()
+        {
+            return Status == "payment successfully completed";
         }
     }
 }
