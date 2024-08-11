@@ -25,5 +25,6 @@ namespace AirlineReservation.Application
 
         }
         public DbSet<Flight> Flights { get; set; }
+        public DbSet<Seat> Seats { get;
     }
 }

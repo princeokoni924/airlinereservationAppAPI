@@ -11,15 +11,40 @@ namespace AirlineReservation.Application.Services
     public class BookingService : IBookingService
     {   
         private readonly List<Flight> _flights;
+        private readonly AirlineSystemDbContext _airlineSystemDbContext;
+        private readonly Seat _seat;
 
-        public BookingService()
+        public BookingService(AirlineSystemDbContext airlineSystemDbContext,Seat seat)
         {
             _flights = new List<Flight>();
             InitializeFlight();
+            _airlineSystemDbContext=airlineSystemDbContext;
+            _seat=seat;
         }
         public async Task AddFlight(Flight flight)
         {
            _flights.Add(flight);
+        }
+        private bool Available()
+        {
+            return _seat.IsOccupied;
+        }
+        public async Task AssignSeatToPassenger(Seat seat, Passenger passengers, Flight flights)
+        {
+            if (Available())
+            {
+               _seat.Passengers = passengers;
+                _seat.IsOccupied = true;
+                _seat.Message = "Seat successfully booked";
+                _seat.AvailableSeat--;
+              await  _airlineSystemDbContext.AddAsync(seat);
+                _airlineSystemDbContext.SaveChanges();
+            }
+            else
+            {
+                _seat.AvailableSeat--;
+               
+            }
         }
 
         public async Task BookFlight(Flight bookflight, Passenger passenger, string seatNumber)
