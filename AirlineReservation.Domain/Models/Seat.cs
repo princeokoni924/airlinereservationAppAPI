@@ -22,7 +22,13 @@ namespace AirlineReservation.Domain.Models
         public Passenger? Passengers { get; set; }
         public Seat()
         {
-            PassengerId = new Guid().ToString().TrimEnd();
+            PassengerId = new Guid().ToString();
+        }
+
+        public void GetSeatDetails()
+        {
+            Console.WriteLine($"Seat Number{SeatNumber}");
+            Console.WriteLine($"Occupied{IsOccupied}");
         }
     }
 }

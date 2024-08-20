@@ -24,6 +24,7 @@ namespace AirlineReservation.Application.Services
         public async Task AddFlight(Flight flight)
         {
            _flights.Add(flight);
+             _airlineSystemDbContext.SaveChanges();
         }
         private bool Available()
         {
@@ -33,26 +34,41 @@ namespace AirlineReservation.Application.Services
         {
             if (Available())
             {
-               _seat.Passengers = passengers;
+                _seat.Passengers.Name = passengers.Name;
+                _seat.Passengers.Email = passengers.Email;
                 _seat.IsOccupied = true;
                 _seat.Message = "Seat successfully booked";
+
                 _seat.AvailableSeat--;
-              await  _airlineSystemDbContext.AddAsync(seat);
+                await _airlineSystemDbContext.AddAsync(seat.Amenities);
+               
                 _airlineSystemDbContext.SaveChanges();
             }
             else
             {
                 _seat.AvailableSeat--;
-               
+
             }
         }
 
-        public async Task BookFlight(Flight bookflight, Passenger passenger, string seatNumber)
+        public async Task BookFlight(Flight bookflight, Passenger passenger, string seatNumber, Seat seats)
         {
-            var ticket = new Ticket(Guid.NewGuid().ToString(), passenger, bookflight, seatNumber);
-            bookflight.BookSeat(ticket);
-            // assum payment has handle here
-            Console.WriteLine($"Ticket booked successfully for{passenger.Name}. Payment processed");
+            if (Available())
+            {
+                _seat.Passengers = passenger;
+                _seat.IsOccupied = true;
+                _seat.AvailableSeat--;
+
+                var ticket = new Ticket(Guid.NewGuid().ToString(), passenger, bookflight, seatNumber);
+                bookflight.BookSeat(ticket);
+
+              await _airlineSystemDbContext.AddAsync(seats);
+                await _airlineSystemDbContext.SaveChangesAsync();
+                // assum payment has handle here
+                Console.WriteLine($"Ticket booked successfully for{passenger.Name}. Payment processed");
+
+            }
+          
         }
         /// <summary>
         /// cancel a ticket base on the ticket number
@@ -69,11 +85,13 @@ namespace AirlineReservation.Application.Services
                 if(ticket != null)
                 {
                     flight.Tickets.Remove(ticket);
+                   // _airlineSystemDbContext.Remove(ticket);
                     // then, increase back the remaining seat by 1
                     flight.RemainingSeat++;
 
                     // remove the ticket on that passenger from the particular flight
                     ticket.Passengers.Tickets.Remove(ticket);
+                    await _airlineSystemDbContext.SaveChangesAsync();
                     //assum there's some sort of refund
                     Console.WriteLine($"Booking canceled for ticket{ticketNumber}, refund on processed.");
                     break;
@@ -124,6 +142,11 @@ namespace AirlineReservation.Application.Services
             .DestinationAirport == destination && search
             .Take_Off.Date == date
             .Date);
+        }
+
+        public Task CalculateClassType(Seat calcSeatTyp)
+        {
+            throw new NotImplementedException();
         }
     }
 }

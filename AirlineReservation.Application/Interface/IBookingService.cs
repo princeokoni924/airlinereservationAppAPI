@@ -28,12 +28,12 @@ namespace AirlineReservation.Application.Interface
         /// <returns></returns>
         Task<Flight> GetSingleFlight(string flightNumber);
 
-        Task BookFlight(Flight bookflight, Passenger passenger, string seatNumber);
+        Task BookFlight(Flight bookflight, Passenger passenger, string seatNumber,Seat seats);
 
         Task CancelBooking(string ticketNumber);
 
-        Task AssignSeatToPassenger(Seat seat, Passenger passengers, Flight flights);
-        
+       // Task AssignSeatToPassenger(Seat seat, Passenger passengers, Flight flights);
+        Task CalculateClassType(Seat calcSeatTyp);
 
         Task InitializeFlight();
 
